@@ -25,5 +25,16 @@ Set properties in configuration file:
 ```
 Task syntax
 ```
-<sort_algorithm>,<size_of_structure> ,<size_of_structure (min. 1)>, <max_value>, <number of repeats>
+<sort_algorithm>,<min size of array> ,<max size of structure>, <step>, <number of repeats>
+```
+
+---
+
+## data-config.ini syntax
+
+```
+<data_file (*.csv)>
+<number of elements>
+<min value>
+<max value>
 ```

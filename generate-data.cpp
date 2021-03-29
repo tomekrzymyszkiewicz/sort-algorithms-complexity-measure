@@ -37,7 +37,7 @@ config load_config(){
     return loaded_config;
 }
 
-bool generate_data_to_file(string file_name, int amount, int min, int max){
+void generate_data_to_file(string file_name, int amount, int min, int max){
     cout<<"Generating "<<amount<<" numbers to data file "<<file_name<<endl;
     fstream fout;
     fout.open(file_name,ios::out);

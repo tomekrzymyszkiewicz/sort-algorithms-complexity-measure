@@ -17,16 +17,18 @@ string results_file_name = "";
 struct Result{
     string sort_algorithm;
     int size_of_array;
-    double time_span;
+    double time_memory;
     int number_of_repetitions;
-    Result(string sort_algorithm, int size_of_array, double time_span, int number_of_repetitions){
+    string type_of_result;
+    Result(string sort_algorithm, int size_of_array, double time_memory, int number_of_repetitions, string type_of_result){
         this->sort_algorithm = sort_algorithm;
         this->size_of_array = size_of_array;
-        this->time_span = time_span;
+        this->time_memory = time_memory;
         this->number_of_repetitions = number_of_repetitions;
+        this->type_of_result = type_of_result;
     }
     string toString(){
-        return(sort_algorithm+","+to_string(size_of_array)+","+to_string(time_span)+","+to_string(number_of_repetitions));
+        return(sort_algorithm+","+to_string(size_of_array)+","+to_string(time_memory)+","+to_string(number_of_repetitions)+","+type_of_result);
     }
 };
 
@@ -34,7 +36,7 @@ void save_results(string results_file_name){
     cout<<"Saving results"<<endl;
     fstream fout;
     fout.open(results_file_name,ios::out);
-    fout<<"sort_algorithm,size_of_array,time_of_sort_s,number_of_repetitions"<<endl;
+    fout<<"sort_algorithm,size_of_array,time_of_sort_s/memory_usage,number_of_repetitions"<<endl;
     for(int i = 0; i < results.size(); i++){
         fout<<results[i]<<endl;
     }
@@ -43,37 +45,41 @@ void save_results(string results_file_name){
 
 }
 
-void swap(int* a, int* b)
+void swap(int* a, int* b, int* used_memory)
 {
     int temp = *a;
+    used_memory += sizeof(temp);
     *a = *b;
     *b = temp;
 }
 
-int partition (int arr[], int low, int high)
+int partition (int arr[], int low, int high, int* used_memory)
 {
     int pivot = arr[high];
+    *used_memory += sizeof(pivot);
     int i = (low - 1);
+    *used_memory += sizeof(i);
  
     for (int j = low; j <= high- 1; j++)
     {
         if (arr[j] <= pivot)
         {
             i++;
-            swap(&arr[i], &arr[j]);
+            swap(&arr[i], &arr[j], used_memory);
         }
     }
-    swap(&arr[i + 1], &arr[high]);
+    swap(&arr[i + 1], &arr[high], used_memory);
     return (i + 1);
 }
  
-void quick_sort(int arr[], int low, int high)
+void quick_sort(int arr[], int low, int high, int* used_memory)
 {
     if (low < high)
     {
-        int pivot = partition(arr, low, high);
-        quick_sort(arr, low, pivot - 1);
-        quick_sort(arr, pivot + 1, high);
+        int pivot = partition(arr, low, high, used_memory);
+        *used_memory += sizeof(pivot);
+        quick_sort(arr, low, pivot - 1, used_memory);
+        quick_sort(arr, pivot + 1, high, used_memory);
     }
 }
 
@@ -178,17 +184,22 @@ int main(){
                         high_resolution_clock::time_point t_start = high_resolution_clock::time_point();
                         high_resolution_clock::time_point t_end = high_resolution_clock::time_point();
                         duration<double> time_span = duration<double>(0);
+                        int* used_memory = new int;
                         for(int k = 1; k <= number_of_repeats; k++){
                             int* test_array = fill_array_with_data(current_size);
+                            *used_memory += sizeof(test_array);
                             t_start = high_resolution_clock::now();
-                            quick_sort(test_array,0,(current_size-1));
+                            quick_sort(test_array,0,(current_size-1),used_memory);
                             t_end = high_resolution_clock::now();
                             time_span += duration_cast<duration<double>>(t_end - t_start);
                             delete test_array;
                         }
                         cout<<"Sorting finished."<<endl;
-                        Result quick_sort_result = Result("quick_sort",current_size,time_span.count(),number_of_repeats);
-                        results.push_back(quick_sort_result.toString());
+                        Result quick_sort_time_result = Result("quick_sort",current_size,time_span.count(),number_of_repeats,"time");
+                        results.push_back(quick_sort_time_result.toString());
+                        Result quick_sort_memory_result = Result("quick_sort",current_size,(double)*used_memory,number_of_repeats,"memory");
+                        results.push_back(quick_sort_memory_result.toString());
+                        delete used_memory;
                     }
                 }else if(sort_algorithm == "counting_sort"){
                 }else{

@@ -4,6 +4,7 @@
 #include<iostream>
 #include<string>
 #include<fstream>
+#include<chrono>
 using namespace std;
 
 vector<int> data_vector;
@@ -12,6 +13,35 @@ vector<string> results;
 string data_file_name = "";
 int data_amount = 0;
 string results_file_name = "";
+
+struct Result{
+    string sort_algorithm;
+    int size_of_array;
+    double time_span;
+    int number_of_repetitions;
+    Result(string sort_algorithm, int size_of_array, double time_span, int number_of_repetitions){
+        this->sort_algorithm = sort_algorithm;
+        this->size_of_array = size_of_array;
+        this->time_span = time_span;
+        this->number_of_repetitions = number_of_repetitions;
+    }
+    string toString(){
+        return(sort_algorithm+","+to_string(size_of_array)+","+to_string(time_span)+","+to_string(number_of_repetitions));
+    }
+};
+
+void save_results(string results_file_name){
+    cout<<"Saving results"<<endl;
+    fstream fout;
+    fout.open(results_file_name,ios::out);
+    fout<<"sort_algorithm,size_of_array,time_of_sort_s,number_of_repetitions"<<endl;
+    for(int i = 0; i < results.size(); i++){
+        fout<<results[i]<<endl;
+    }
+    fout.close();
+    cout<<"Correctly saved "<<results.size()<<" results"<<endl;
+
+}
 
 void swap(int* a, int* b)
 {
@@ -53,6 +83,14 @@ int* fill_array_with_data(int size){
         array[i] = data_vector[i];
     }
     return array;
+}
+
+void printArray(int arr[], int size)
+{
+    int i;
+    for (i=0; i < size; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
 }
 
 bool load_data(string file_name, int amount){
@@ -127,20 +165,30 @@ int main(){
             int max_size = stoi(tasks[i][2]);
             int step = stoi(tasks[i][3]);
             int number_of_repeats = stoi(tasks[i][4]);
-            cout<<"Sorting "<<sort_algorithm<<" arrays with numbers ranging from "<<min_size<<" to "<<max_size<<", repeated"<<number_of_repeats<<" times"<<endl;
+            cout<<"Sorting "<<sort_algorithm<<" arrays with numbers ranging from "<<min_size<<" to "<<max_size<<", repeated "<<number_of_repeats<<" times"<<endl;
             if(min_size<1){
                 cout<<"Cannot execute task. The array must to have at least 1 element.";
             }else if(number_of_repeats<1){
                 cout<<"Cannot execute task. The minimum number of repetitions is 1.";
             }else{
                 if(sort_algorithm == "quick_sort"){
-                    for(int j = min_size; j <= max_size; j+=step){
-                        cout<<"Sorting an array with "<<j<<" elements. "<<number_of_repeats<<" repeats of task."<<endl;
+                    for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                        using namespace std::chrono;
+                        cout<<"Sorting an array with "<<current_size<<" elements. "<<number_of_repeats<<" repeats of task."<<endl;
+                        high_resolution_clock::time_point t_start = high_resolution_clock::time_point();
+                        high_resolution_clock::time_point t_end = high_resolution_clock::time_point();
+                        duration<double> time_span = duration<double>(0);
                         for(int k = 1; k <= number_of_repeats; k++){
-                            int* test_array = fill_array_with_data(j);
-                            quick_sort(test_array,0,(j-1));
+                            int* test_array = fill_array_with_data(current_size);
+                            t_start = high_resolution_clock::now();
+                            quick_sort(test_array,0,(current_size-1));
+                            t_end = high_resolution_clock::now();
+                            time_span += duration_cast<duration<double>>(t_end - t_start);
+                            delete test_array;
                         }
                         cout<<"Sorting finished."<<endl;
+                        Result quick_sort_result = Result("quick_sort",current_size,time_span.count(),number_of_repeats);
+                        results.push_back(quick_sort_result.toString());
                     }
                 }else if(sort_algorithm == "counting_sort"){
                 }else{
@@ -149,6 +197,6 @@ int main(){
             }
         }
     }
-    
+    save_results(results_file_name);
     return 0;
 }

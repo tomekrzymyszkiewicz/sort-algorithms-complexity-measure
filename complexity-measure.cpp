@@ -45,7 +45,7 @@ void save_results(string results_file_name){
 
 }
 
-void swap(int* a, int* b, int* used_memory)
+void swap_m(int* a, int* b, int* used_memory)
 {
     int temp = *a;
     used_memory += sizeof(temp);
@@ -53,7 +53,7 @@ void swap(int* a, int* b, int* used_memory)
     *b = temp;
 }
 
-int partition (int arr[], int low, int high, int* used_memory)
+int partition_m(int arr[], int low, int high, int* used_memory)
 {
     int pivot = arr[high];
     *used_memory += sizeof(pivot);
@@ -65,21 +65,21 @@ int partition (int arr[], int low, int high, int* used_memory)
         if (arr[j] <= pivot)
         {
             i++;
-            swap(&arr[i], &arr[j], used_memory);
+            swap_m(&arr[i], &arr[j], used_memory);
         }
     }
-    swap(&arr[i + 1], &arr[high], used_memory);
+    swap_m(&arr[i + 1], &arr[high], used_memory);
     return (i + 1);
 }
  
-void quick_sort(int arr[], int low, int high, int* used_memory)
+void quick_sort_m(int arr[], int low, int high, int* used_memory)
 {
     if (low < high)
     {
-        int pivot = partition(arr, low, high, used_memory);
+        int pivot = partition_m(arr, low, high, used_memory);
         *used_memory += sizeof(pivot);
-        quick_sort(arr, low, pivot - 1, used_memory);
-        quick_sort(arr, pivot + 1, high, used_memory);
+        quick_sort_m(arr, low, pivot - 1, used_memory);
+        quick_sort_m(arr, pivot + 1, high, used_memory);
     }
 }
 

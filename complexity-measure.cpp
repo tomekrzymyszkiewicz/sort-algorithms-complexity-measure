@@ -36,7 +36,7 @@ void save_results(string results_file_name){
     cout<<"Saving results"<<endl;
     fstream fout;
     fout.open(results_file_name,ios::out);
-    fout<<"sort_algorithm,size_of_array,time_of_sort_s/memory_usage,number_of_repetitions"<<endl;
+    fout<<"sort_algorithm,size_of_array,time_of_sort_s/memory_usage,number_of_repetitions,type_of_test"<<endl;
     for(int i = 0; i < results.size(); i++){
         fout<<results[i]<<endl;
     }

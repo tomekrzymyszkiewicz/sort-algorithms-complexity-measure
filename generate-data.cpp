@@ -14,9 +14,11 @@ struct config
 
 int* array_with_random_numbers(int size, int min,int max){
     int* array = new int[size];
-    srand(time(NULL));
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(min, max);
     for(int i = 0; i < size; i++){
-        array[i] = (rand() % (2*max+1)) + min;
+        array[i] = dis(gen);
     }
     return array;
 }

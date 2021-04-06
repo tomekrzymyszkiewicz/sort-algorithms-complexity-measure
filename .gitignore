@@ -1,7 +1,7 @@
 
 # Created by https://www.toptal.com/developers/gitignore/api/c++,vscode,windows,latex
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++,vscode,windows,latex
-
+*.json
 ### C++ ###
 # Prerequisites
 *.d
@@ -370,3 +370,9 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,vscode,windows,latex
+.vscode/launch.json
+.vscode/settings.json
+.vscode/tasks.json
+wyniki.csv
+documentation/opracowanie.xlsx
+dane.csv

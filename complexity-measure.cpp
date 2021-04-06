@@ -59,7 +59,6 @@ int partition_m(int arr[], int low, int high, int* used_memory)
     *used_memory += sizeof(pivot);
     int i = (low - 1);
     *used_memory += sizeof(i);
- 
     for (int j = low; j <= high- 1; j++)
     {
         if (arr[j] <= pivot)
@@ -80,6 +79,40 @@ void quick_sort_m(int arr[], int low, int high, int* used_memory)
         *used_memory += sizeof(pivot);
         quick_sort_m(arr, low, pivot - 1, used_memory);
         quick_sort_m(arr, pivot + 1, high, used_memory);
+    }
+}
+
+void swap_t(int* a, int* b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition_t(int arr[], int low, int high)
+{
+    int pivot = arr[high];
+    int i = (low - 1);
+ 
+    for (int j = low; j <= high- 1; j++)
+    {
+        if (arr[j] <= pivot)
+        {
+            i++;
+            swap_t(&arr[i], &arr[j]);
+        }
+    }
+    swap_t(&arr[i + 1], &arr[high]);
+    return (i + 1);
+}
+ 
+void quick_sort_t(int arr[], int low, int high)
+{
+    if (low < high)
+    {
+        int pivot = partition_t(arr, low, high);
+        quick_sort_t(arr, low, pivot - 1);
+        quick_sort_t(arr, pivot + 1, high);
     }
 }
 
@@ -192,7 +225,7 @@ int main(){
                                 int* test_array = fill_array_with_data(current_size);
                                 *used_memory += sizeof(test_array);
                                 t_start = high_resolution_clock::now();
-                                quick_sort(test_array,0,(current_size-1),used_memory);
+                                quick_sort_m(test_array,0,(current_size-1),used_memory);
                                 t_end = high_resolution_clock::now();
                                 time_span += duration_cast<duration<double>>(t_end - t_start);
                                 delete test_array;
@@ -216,7 +249,7 @@ int main(){
                                 int* test_array = fill_array_with_data(current_size);
                                 *used_memory += sizeof(test_array);
                                 t_start = high_resolution_clock::now();
-                                quick_sort(test_array,0,(current_size-1),used_memory);
+                                quick_sort_t(test_array,0,(current_size-1),used_memory);
                                 t_end = high_resolution_clock::now();
                                 time_span += duration_cast<duration<double>>(t_end - t_start);
                                 delete test_array;

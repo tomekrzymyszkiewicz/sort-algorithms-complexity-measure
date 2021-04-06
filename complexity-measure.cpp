@@ -215,7 +215,7 @@ int main(){
                 if(sort_algorithm == "quick_sort"){
                     if(test_type == "m"){
                         for(int current_size = min_size; current_size <= max_size; current_size+=step){
-                            cout<<"Sorting an array with "<<current_size<<" elements. "<<number_of_repeats<<" repeats of task."<<endl;
+                            cout<<"Memory test. Sorting an array with "<<current_size<<" elements. "<<number_of_repeats<<" repeats of task."<<endl;
                             int* used_memory = new int;
                             for(int k = 1; k <= number_of_repeats; k++){
                                 int* test_array = fill_array_with_data(current_size);
@@ -231,7 +231,7 @@ int main(){
                     }else if(test_type == "t"){
                         for(int current_size = min_size; current_size <= max_size; current_size+=step){
                             using namespace std::chrono;
-                            cout<<"Sorting an array with "<<current_size<<" elements. "<<number_of_repeats<<" repeats of task."<<endl;
+                            cout<<"Time test. Sorting an array with "<<current_size<<" elements. "<<number_of_repeats<<" repeats of task."<<endl;
                             high_resolution_clock::time_point t_start = high_resolution_clock::time_point();
                             high_resolution_clock::time_point t_end = high_resolution_clock::time_point();
                             duration<double> time_span = duration<double>(0);

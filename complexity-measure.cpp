@@ -5,6 +5,8 @@
 #include<string>
 #include<fstream>
 #include<chrono>
+#include <cstring>
+#include <algorithm>
 using namespace std;
 
 vector<int> data_vector;
@@ -114,6 +116,26 @@ void quick_sort_t(int arr[], int low, int high)
         quick_sort_t(arr, low, pivot - 1);
         quick_sort_t(arr, pivot + 1, high);
     }
+}
+
+void counting_sort_t(int array[],int size_of_array,int max_value){
+    int* output = new int[size_of_array];
+    int* count = new int[max_value + 1];
+    int i;
+    memset(count, 0, (max_value+1)*sizeof(int));
+    for(i = 0; i < size_of_array; i++)
+        count[array[i]]++;
+ 
+    for(i = 1; i <= max_value; i++)
+        count[i] += count[i - 1];
+ 
+    for(i = size_of_array-1; i>=0; i--){
+        count[array[i]]--;
+        output[count[array[i]]] = array[i];
+    }
+    memcpy(array,output,size_of_array*sizeof(int));
+    delete output;
+    delete count;
 }
 
 int* fill_array_with_data(int size){
@@ -250,8 +272,47 @@ int main(){
                     }else{
                         cout<<"Wrong test type."<<endl;
                     }
-                    
                 }else if(sort_algorithm == "counting_sort"){
+                    if(test_type == "m"){
+                        // for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                        //     cout<<"Memory test. Sorting an array with "<<current_size<<" elements. "<<number_of_repeats<<" repeats of task."<<endl;
+                        //     int* used_memory = new int;
+                        //     for(int k = 1; k <= number_of_repeats; k++){
+                        //         int* test_array = fill_array_with_data(current_size);
+                        //         *used_memory += sizeof(test_array);
+                        //         quick_sort_m(test_array,0,(current_size-1),used_memory);
+                        //         delete test_array;
+                        //     }
+                        //     cout<<"Sorting finished."<<endl;
+                        //     Result quick_sort_memory_result = Result("quick_sort",current_size,(double)*used_memory,number_of_repeats,"memory");
+                        //     results.push_back(quick_sort_memory_result.toString());
+                        //     delete used_memory;
+                        // }
+                    }else if(test_type == "t"){
+                        for(int current_size = min_size; current_size <= max_size; current_size+=step){
+                            using namespace std::chrono;
+                            cout<<"Time test. Sorting an array with "<<current_size<<" elements. "<<number_of_repeats<<" repeats of task."<<endl;
+                            high_resolution_clock::time_point t_start = high_resolution_clock::time_point();
+                            high_resolution_clock::time_point t_end = high_resolution_clock::time_point();
+                            duration<double> time_span = duration<double>(0);
+                            for(int k = 1; k <= number_of_repeats; k++){
+                                int* test_array = fill_array_with_data(current_size);
+                                int max_value = *std::max_element(test_array,test_array+current_size);
+                                printArray(test_array,current_size);
+                                t_start = high_resolution_clock::now();
+                                counting_sort_t(test_array,current_size,max_value);
+                                t_end = high_resolution_clock::now();
+                                printArray(test_array,current_size);
+                                time_span += duration_cast<duration<double>>(t_end - t_start);
+                                delete test_array;
+                            }
+                            cout<<"Sorting finished."<<endl;
+                            Result quick_sort_time_result = Result("quick_sort",current_size,time_span.count(),number_of_repeats,"time");
+                            results.push_back(quick_sort_time_result.toString());
+                        }
+                    }else{
+                        cout<<"Wrong test type."<<endl;
+                    }
                 }else{
                     cout<<"Cannot recognize "<<sort_algorithm<<" algorithm.";
                 }
